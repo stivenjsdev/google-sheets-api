@@ -2,7 +2,7 @@
   "name": "google-sheet",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Stiven Trujillo",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -23,10 +23,12 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-fastify": "^9.3.9",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
+    "@jridgewell/sourcemap-codec": "^1.4.14",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
@@ -47,7 +49,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.1",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "webpack": "^5.75.0"
   },
   "jest": {
     "moduleFileExtensions": [
