@@ -1,5 +1,5 @@
 {
-  "name": "google-sheet",
+  "name": "google-sheets",
   "version": "0.0.1",
   "description": "",
   "author": "Stiven Trujillo",
@@ -24,6 +24,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/platform-fastify": "^9.3.9",
+    "fastify": "^4.14.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
