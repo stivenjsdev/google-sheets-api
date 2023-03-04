@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
+// import { FastifyRequest, FastifyReply } from 'fastify';
 import { GoogleSheetsService } from './google-sheets.service';
 
 @Controller('google-sheets')
@@ -7,21 +7,29 @@ export class GoogleSheetsController {
   constructor(private gsService: GoogleSheetsService) {}
 
   @Get()
-  async getAll(): Promise<object[]> {
-    const spreadSheetId = '1ZR_P9KseivejdptQbJo3E0Qtod6zlYmsJMs2xX3KkPA';
-    const sheetName = 'Hoja 1';
-    const range = 'A:C';
+  async getAll(
+    @Query('spreadSheetId') spreadSheetId: string,
+    @Query('sheetName') sheetName: string = 'Hoja 1',
+    @Query('range') range: string = 'A:Z',
+  ): Promise<object[]> {
+    if(!spreadSheetId)
+      throw new HttpException('THE QUERY PARAM spreadSheetId IS REQUIRED', HttpStatus.BAD_REQUEST);
+
     const rows = await this.gsService.findAll(spreadSheetId, sheetName, range);
     return this.gsService.mapRowsToObjectList(rows);
   }
 
-  @Get(':field')
-  async filter(@Param('field') field: string): Promise<unknown> {
-    const spreadSheetId = '1ZR_P9KseivejdptQbJo3E0Qtod6zlYmsJMs2xX3KkPA';
-    const sheetName = 'Hoja 1';
-    const range = 'A:C';
-    const column = 3;
-    const valueToSearch = 'Michi'
+  @Get(':column/:value')
+  async filter(
+    @Query('spreadSheetId') spreadSheetId: string,
+    @Query('sheetName') sheetName: string = 'Hoja 1',
+    @Query('range') range: string = 'A:Z',
+    @Param('column') column: number,
+    @Param('value') valueToSearch: string
+  ): Promise<object[]> {
+    if(!spreadSheetId)
+      throw new HttpException('THE QUERY PARAM spreadSheetId IS REQUIRED', HttpStatus.BAD_REQUEST);
+
     const rows = await this.gsService.filter(spreadSheetId, sheetName, range, column, valueToSearch);
     return this.gsService.mapRowsToObjectList(rows);
   }
