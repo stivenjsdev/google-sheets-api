@@ -11,6 +11,7 @@ export class GoogleSheetsService {
     @Inject(googleConfig.KEY)
     private configService: ConfigType<typeof googleConfig>
   ) {
+    // authentication
     const auth = new google.auth.GoogleAuth({
       credentials: {
         private_key: this.configService.google.privateKey,
