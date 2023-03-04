@@ -1,15 +1,20 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { google, sheets_v4 } from 'googleapis';
+import { ConfigType } from '@nestjs/config';
+import googleConfig from 'src/config/google.config';
 
 @Injectable()
 export class GoogleSheetsService {
   private readonly sheets: sheets_v4.Sheets;
 
-  constructor() {
+  constructor(
+    @Inject(googleConfig.KEY)
+    private configService: ConfigType<typeof googleConfig>
+  ) {
     const auth = new google.auth.GoogleAuth({
       credentials: {
-        private_key: PRIVATE_KEY,
-        client_email: CLIENT_EMAIL,
+        private_key: this.configService.google.privateKey,
+        client_email: this.configService.google.clientEmail,
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
@@ -70,7 +75,7 @@ export class GoogleSheetsService {
       const rows = await this.findAll(spreadSheetId, sheetName, range);
 
       const filteredData: string[][] = rows.filter(
-        (row) => row[column - 1].trim().toLowerCase() === valueToSearch.trim().toLowerCase(),
+        (row) => row[column - 1]?.trim()?.toLowerCase() === valueToSearch?.trim().toLowerCase(),
       );
 
       if (filteredData.length === 0)
