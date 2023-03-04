@@ -90,6 +90,7 @@ export class GoogleSheetsService {
 
   /**
    * Append a Row at the end of the Sheet
+   * Note: range not matter
    * @param spreadsheetId
    * @param sheetName
    * @param range
@@ -123,6 +124,7 @@ export class GoogleSheetsService {
 
   /**
    * Update a field Row in a specific range
+   * Note: range is very important
    * @param spreadsheetId
    * @param sheetName
    * @param range
@@ -236,7 +238,7 @@ export class GoogleSheetsService {
    * @param object - any object
    * @returns Row
    */
-  mapObjectToRow(object: object): unknown[] {
+  mapObjectToRow(object: object): string[] {
     return Object.values(object);
   }
 }
