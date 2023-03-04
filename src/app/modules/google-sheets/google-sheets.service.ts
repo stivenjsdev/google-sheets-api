@@ -45,11 +45,20 @@ export class GoogleSheetsService {
       return result.data.values;
     } catch (e) {
       console.error(e.message);
-      // throw Error(`no data found in spreadsheet`);
       throw new HttpException(e.message, HttpStatus.NOT_FOUND);
     }
   }
 
+  /**
+   * Filter row by column and value.
+   * NOTE: spreadsheets cannot contain more than 1000 rows
+   * @param spreadSheetId 
+   * @param sheetName 
+   * @param range 
+   * @param column 
+   * @param valueToSearch 
+   * @returns list of rows
+   */
   async filter(
     spreadSheetId: string,
     sheetName: string,
@@ -224,7 +233,7 @@ export class GoogleSheetsService {
 
   /**
    * Converts an Objet to a Google Sheet Row
-   * @param object - any object to
+   * @param object - any object
    * @returns Row
    */
   mapObjectToRow(object: object): unknown[] {
