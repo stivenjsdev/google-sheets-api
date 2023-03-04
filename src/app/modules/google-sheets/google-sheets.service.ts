@@ -67,17 +67,17 @@ export class GoogleSheetsService {
     valueToSearch: string,
   ): Promise<string[][]> {
     try {
-      console.log('column->', column);
-      console.log('valueToSearch->', valueToSearch);
       const rows = await this.findAll(spreadSheetId, sheetName, range);
-      console.log('rows->', rows);
+
       const filteredData: string[][] = rows.filter(
-        (row) => row[column - 1] === valueToSearch,
+        (row) => row[column - 1].trim().toLowerCase() === valueToSearch.trim().toLowerCase(),
       );
-      console.log('filteredData->', filteredData);
+
       if (filteredData.length === 0)
         throw new HttpException('ROWS NOT FOUND', HttpStatus.NOT_FOUND);
+
       filteredData.unshift(rows[0])
+      
       return filteredData;
     } catch (e) {
       console.error(e.message);
