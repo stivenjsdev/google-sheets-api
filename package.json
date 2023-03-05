@@ -5,10 +5,14 @@
   "author": "Stiven Trujillo",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "18.14.2",
+    "npm": "9.5.0"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -17,7 +21,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "postuninstall": "tsc --sourceMap false"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
