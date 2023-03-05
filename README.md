@@ -24,7 +24,17 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is a simple app that allows you to consult, append, update and delete Row in a Google Sheet.
+
+Built with NestJS, using googleapis, and deployed with Heroku.
+
+## Instructions
+
+To work, the google sheet needs to have the file shared with the following email:
+
+```
+android-examples-6c85f@appspot.gserviceaccount.com
+```
 
 ## Installation
 
@@ -35,10 +45,7 @@ $ pnpm install
 ## Running the app
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
+# development watch mode
 $ pnpm run start:dev
 
 # production mode
