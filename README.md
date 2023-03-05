@@ -38,6 +38,24 @@ android-examples-6c85f@appspot.gserviceaccount.com
 
 ## Installation
 
+Install Volta:
+
+```bash
+$ curl https://get.volta.sh | bash
+```
+Node and NPM version
+
+```
+"node": "18.14.2"
+"npm": "9.5.0"
+```
+
+Install pnpm
+
+```bash
+wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
+```
+
 ```bash
 $ pnpm install
 ```
