@@ -24,9 +24,13 @@
 
 ## Description
 
-This is a simple app that allows you to consult, append, update and delete Row in a Google Sheet.
+This is a simple app that allows you to consult, append, update and delete Rows and Cells in a Google Sheet.
 
 Built with NestJS, using googleapis, and deployed with Heroku.
+
+## Deployment
+
+https://google-sheets.herokuapp.com/
 
 ## Instructions
 
