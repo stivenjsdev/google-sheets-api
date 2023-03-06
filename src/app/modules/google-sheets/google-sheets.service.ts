@@ -1,17 +1,20 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { google, sheets_v4 } from 'googleapis';
 import { ConfigType } from '@nestjs/config';
-import googleConfig from 'src/config/google.config';
+import googleConfig from '../../../config/google.config';
 
 @Injectable()
 export class GoogleSheetsService {
-  private readonly sheets: sheets_v4.Sheets;
+  private sheets: sheets_v4.Sheets;
 
   constructor(
     @Inject(googleConfig.KEY)
     private configService: ConfigType<typeof googleConfig>
   ) {
-    // authentication
+    this.auth();
+  }
+
+  auth() {
     const auth = new google.auth.GoogleAuth({
       credentials: {
         private_key: this.configService.google.privateKey,
@@ -223,11 +226,11 @@ export class GoogleSheetsService {
   }
 
   /**
-   * Converts the rows returned by google sheet to
+   * Converts the list of rows returned by google sheet to
    * a list of objects, where the keys of the objects
-   * will be the first row
+   * will be the first row (important)
    * @param rows - rows list returned by google sheet
-   * @returns Rows list mapped to objet list
+   * @returns Object list
    */
   mapRowsToObjectList(rows: string[][]): object[] {
     const [keys, ...values] = rows;
