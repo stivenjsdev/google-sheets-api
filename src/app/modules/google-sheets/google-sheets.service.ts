@@ -116,7 +116,7 @@ export class GoogleSheetsService {
     sheetName: string,
     range: string,
     fields: unknown[],
-  ): Promise<{ message: string; updatedRange: string }> {
+  ): Promise<{ updatedRange: string }> {
     try {
       const result = await this.sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId,
@@ -129,7 +129,7 @@ export class GoogleSheetsService {
 
       const updatedRange = result?.data?.updates?.updatedRange;
 
-      return { message: 'Row Appended', updatedRange };
+      return { updatedRange };
     } catch (e) {
       console.error({ error: e.message });
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -150,7 +150,7 @@ export class GoogleSheetsService {
     sheetName: string,
     range: string,
     fields: unknown[],
-  ): Promise<{ message: string; updatedRange: string }> {
+  ): Promise<{ updatedRange: string }> {
     try {
       const result = await this.sheets.spreadsheets.values.update({
         spreadsheetId: spreadsheetId,
@@ -170,7 +170,7 @@ export class GoogleSheetsService {
 
       const updatedRange = result?.data?.updatedRange;
 
-      return { message: 'Row Updated', updatedRange };
+      return { updatedRange };
     } catch (e) {
       console.error({ error: e.message });
       if (e instanceof HttpException) {
@@ -191,7 +191,7 @@ export class GoogleSheetsService {
     spreadsheetId: string,
     sheetName: string,
     rowNumber: number,
-  ): Promise<{ message: string }> {
+  ): Promise<void> {
     try {
       const response = await this.sheets.spreadsheets.get({
         spreadsheetId,
@@ -222,8 +222,6 @@ export class GoogleSheetsService {
           requests: [request],
         },
       });
-
-      return { message: 'Row Deleted' };
     } catch (e) {
       console.error({ error: e.message });
       if (e instanceof HttpException) {

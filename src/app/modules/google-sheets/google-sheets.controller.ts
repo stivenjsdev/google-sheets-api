@@ -62,14 +62,14 @@ export class GoogleSheetsController {
 
     const fields = this.gsService.mapObjectToRow(data);
 
-    const result = await this.gsService.append(
+    const { updatedRange } = await this.gsService.append(
       spreadSheetId,
       sheetName,
       range,
       fields,
     );
 
-    return result;
+    return { message: 'Row Appended', updatedRange };
   }
 
   @Patch()
@@ -83,14 +83,17 @@ export class GoogleSheetsController {
 
     const fields = this.gsService.mapObjectToRow(data);
 
-    const result = await this.gsService.update(
+    const { updatedRange } = await this.gsService.update(
       spreadSheetId,
       sheetName,
       range,
       fields,
     );
 
-    return result;
+    return {
+      message: 'Row Updated',
+      updatedRange,
+    };
   }
 
   @Delete()
@@ -101,12 +104,8 @@ export class GoogleSheetsController {
 
     if (!sheetName) sheetName = 'Hoja 1';
 
-    const result = await this.gsService.delete(
-      spreadSheetId,
-      sheetName,
-      rowNumber,
-    );
+    await this.gsService.delete(spreadSheetId, sheetName, rowNumber);
 
-    return result;
+    return { message: 'Row Deleted' };
   }
 }
