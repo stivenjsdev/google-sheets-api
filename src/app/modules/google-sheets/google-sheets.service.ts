@@ -9,7 +9,7 @@ export class GoogleSheetsService {
 
   constructor(
     @Inject(googleConfig.KEY)
-    private configService: ConfigType<typeof googleConfig>
+    private configService: ConfigType<typeof googleConfig>,
   ) {
     this.auth();
   }
@@ -53,19 +53,22 @@ export class GoogleSheetsService {
 
       return result.data.values;
     } catch (e) {
-      console.error(e.message);
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+      console.error({ error: e.message });
+      if (e.message === 'NOT FOUND DATA IN THAT RANGE') {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   /**
    * Filter row by column and value.
    * NOTE: spreadsheets cannot contain more than 1000 rows
-   * @param spreadSheetId 
-   * @param sheetName 
-   * @param range 
-   * @param column 
-   * @param valueToSearch 
+   * @param spreadSheetId
+   * @param sheetName
+   * @param range
+   * @param column
+   * @param valueToSearch
    * @returns list of rows
    */
   async filter(
@@ -79,14 +82,16 @@ export class GoogleSheetsService {
       const rows = await this.findAll(spreadSheetId, sheetName, range);
 
       const filteredData: string[][] = rows.filter(
-        (row) => row[column - 1]?.trim()?.toLowerCase() === valueToSearch?.trim().toLowerCase(),
+        (row) =>
+          row[column - 1]?.trim()?.toLowerCase() ===
+          valueToSearch?.trim().toLowerCase(),
       );
 
       if (filteredData.length === 0)
         throw new HttpException('ROWS NOT FOUND', HttpStatus.NOT_FOUND);
 
-      filteredData.unshift(rows[0])
-      
+      filteredData.unshift(rows[0]);
+
       return filteredData;
     } catch (e) {
       console.error(e.message);

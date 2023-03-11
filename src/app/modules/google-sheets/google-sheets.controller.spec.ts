@@ -7,9 +7,6 @@ import { GoogleSheetsService } from './google-sheets.service';
 describe('GoogleSheetsController', () => {
   let controller: GoogleSheetsController;
   let service: GoogleSheetsService;
-  const spreadSheetId = 'spreadSheetId';
-  const sheetName = 'sheetName';
-  const range = 'range';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,26 +35,31 @@ describe('GoogleSheetsController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('An array of two empty arrays, should return an array with a single object', async () => {
-    const result = [[], []];
-    jest
-      .spyOn(service, 'findAll')
-      .mockImplementation(() => Promise.resolve(result));
-      
-    expect(await controller.getAll(spreadSheetId, sheetName, range)).toEqual([
-      {},
-    ]);
-  });
+  describe('findAll', () => {
+    it('An array of two empty arrays, should return an array with a single object', async () => {
+      const result = [[], []];
+      jest
+        .spyOn(service, 'findAll')
+        .mockImplementation(() => Promise.resolve(result));
+  
+      expect(await controller.getAll('Asdf123asdf', 'Hoja 1', 'A:Z')).toEqual([
+        {},
+      ]);
+    });
+  
+    it('An array of three empty arrays, should return an array with two objects', async () => {
+      const result = [[], [], []];
+      jest
+        .spyOn(service, 'findAll')
+        .mockImplementation(() => Promise.resolve(result));
+  
+      expect(await controller.getAll('Asdf123asdf', 'Hoja 1', 'A:Z')).toEqual([
+        {},
+        {},
+      ]);
+    });
 
-  it('An array of three empty arrays, should return an array with two objects', async () => {
-    const result = [[], [], []];
-    jest
-      .spyOn(service, 'findAll')
-      .mockImplementation(() => Promise.resolve(result));
+  })
 
-    expect(await controller.getAll(spreadSheetId, sheetName, range)).toEqual([
-      {},
-      {},
-    ]);
-  });
+
 });

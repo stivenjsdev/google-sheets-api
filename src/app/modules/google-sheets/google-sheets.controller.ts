@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AppendRowDto } from './dto/append-row.dto';
 import { DeleteRowDto } from './dto/delete-row.dto';
+import { GetRowsDto } from './dto/get-rows.dto';
 import { UpdateFieldsRowDto } from './dto/update-fields-row.dto';
 // import { FastifyRequest, FastifyReply } from 'fastify';
 import { GoogleSheetsService } from './google-sheets.service';
@@ -22,18 +23,11 @@ export class GoogleSheetsController {
   constructor(private gsService: GoogleSheetsService) {}
 
   @Get()
-  async getAll(
-    @Query('spreadSheetId') spreadSheetId: string,
-    @Query('sheetName') sheetName: string = 'Hoja 1',
-    @Query('range') range: string = 'A:Z',
-  ): Promise<object[]> {
-    if (!spreadSheetId)
-      throw new HttpException(
-        'THE QUERY PARAM spreadSheetId IS REQUIRED',
-        HttpStatus.BAD_REQUEST,
-      );
+  async getAll(@Query() query: GetRowsDto): Promise<object[]> {
+    const { spreadSheetId, sheetName, range } = query;
 
     const rows = await this.gsService.findAll(spreadSheetId, sheetName, range);
+    
     return this.gsService.mapRowsToObjectList(rows);
   }
 
@@ -105,9 +99,7 @@ export class GoogleSheetsController {
   }
 
   @Delete()
-  async delete(
-    @Body() deleteRowDto: DeleteRowDto
-  ): Promise<{
+  async delete(@Body() deleteRowDto: DeleteRowDto): Promise<{
     message: string;
   }> {
     let { spreadSheetId, sheetName, rowNumber } = deleteRowDto;
