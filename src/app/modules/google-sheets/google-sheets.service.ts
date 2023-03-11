@@ -54,7 +54,7 @@ export class GoogleSheetsService {
       return result.data.values;
     } catch (e) {
       console.error({ error: e.message });
-      if (e.message === 'NOT FOUND DATA IN THAT RANGE') {
+      if (e instanceof HttpException) {
         throw e;
       }
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
@@ -94,11 +94,11 @@ export class GoogleSheetsService {
 
       return filteredData;
     } catch (e) {
-      console.error(e.message);
+      console.error({ error: e.message });
       if (e instanceof HttpException) {
         throw e;
       }
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -131,7 +131,7 @@ export class GoogleSheetsService {
 
       return { message: 'Row Appended', updatedRange };
     } catch (e) {
-      console.error(e);
+      console.error({ error: e.message });
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -172,7 +172,10 @@ export class GoogleSheetsService {
 
       return { message: 'Row Updated', updatedRange };
     } catch (e) {
-      console.error(e);
+      console.error({ error: e.message });
+      if (e instanceof HttpException) {
+        throw e;
+      }
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -222,7 +225,7 @@ export class GoogleSheetsService {
 
       return { message: 'Row Deleted' };
     } catch (e) {
-      console.error(e);
+      console.error({ error: e.message });
       if (e instanceof HttpException) {
         throw e;
       }
