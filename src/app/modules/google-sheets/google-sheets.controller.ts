@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AppendRowDto } from './dto/append-row.dto';
 import { DeleteRowDto } from './dto/delete-row.dto';
+import { FilterRowsDto } from './dto/filter-rows.dto';
 import { GetRowsDto } from './dto/get-rows.dto';
 import { UpdateFieldsRowDto } from './dto/update-fields-row.dto';
 // import { FastifyRequest, FastifyReply } from 'fastify';
@@ -27,23 +28,17 @@ export class GoogleSheetsController {
     const { spreadSheetId, sheetName, range } = query;
 
     const rows = await this.gsService.findAll(spreadSheetId, sheetName, range);
-    
+
     return this.gsService.mapRowsToObjectList(rows);
   }
 
   @Get(':column/:value')
   async filter(
-    @Query('spreadSheetId') spreadSheetId: string,
-    @Query('sheetName') sheetName: string = 'Hoja 1',
-    @Query('range') range: string = 'A:Z',
+    @Query() query: FilterRowsDto,
     @Param('column') column: number,
     @Param('value') valueToSearch: string,
   ): Promise<object[]> {
-    if (!spreadSheetId)
-      throw new HttpException(
-        'THE QUERY PARAM spreadSheetId IS REQUIRED',
-        HttpStatus.BAD_REQUEST,
-      );
+    const { spreadSheetId, sheetName, range } = query;
 
     const rows = await this.gsService.filter(
       spreadSheetId,
