@@ -30,7 +30,7 @@ Built with NestJS, using googleapis, and deployed with Heroku.
 
 ## Deployment
 
-https://google-sheets.herokuapp.com/
+https://google-sheets.up.railway.app
 
 ## Instructions
 
