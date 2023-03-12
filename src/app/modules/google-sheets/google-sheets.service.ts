@@ -9,12 +9,12 @@ export class GoogleSheetsService {
 
   constructor(
     @Inject(googleConfig.KEY)
-    private configService: ConfigType<typeof googleConfig>,
+    private readonly configService: ConfigType<typeof googleConfig>,
   ) {
     this.auth();
   }
 
-  auth() {
+  private auth() {
     const auth = new google.auth.GoogleAuth({
       credentials: {
         private_key: this.configService.google.privateKey,
@@ -44,7 +44,7 @@ export class GoogleSheetsService {
         range: `${sheetName}!${range}`,
       });
 
-      if (!result.data.values) {
+      if (result?.data?.values.length === 0) {
         throw new HttpException(
           'NOT FOUND DATA IN THAT RANGE',
           HttpStatus.NOT_FOUND,
@@ -53,7 +53,7 @@ export class GoogleSheetsService {
 
       return result.data.values;
     } catch (e) {
-      console.error({ error: e.message });
+      console.log({ error: e.message });
       if (e instanceof HttpException) {
         throw e;
       }
@@ -94,7 +94,7 @@ export class GoogleSheetsService {
 
       return filteredData;
     } catch (e) {
-      console.error({ error: e.message });
+      console.log({ error: e.message });
       if (e instanceof HttpException) {
         throw e;
       }
@@ -131,7 +131,7 @@ export class GoogleSheetsService {
 
       return { updatedRange };
     } catch (e) {
-      console.error({ error: e.message });
+      console.log({ error: e.message });
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -172,7 +172,7 @@ export class GoogleSheetsService {
 
       return { updatedRange };
     } catch (e) {
-      console.error({ error: e.message });
+      console.log({ error: e.message });
       if (e instanceof HttpException) {
         throw e;
       }
@@ -223,7 +223,7 @@ export class GoogleSheetsService {
         },
       });
     } catch (e) {
-      console.error({ error: e.message });
+      console.log({ error: e.message });
       if (e instanceof HttpException) {
         throw e;
       }
