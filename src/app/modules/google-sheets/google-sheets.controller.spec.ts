@@ -36,30 +36,57 @@ describe('GoogleSheetsController', () => {
   });
 
   describe('findAll', () => {
-    it('An array of two empty arrays, should return an array with a single object', async () => {
-      const result = [[], []];
+    it('should return a list of rows represented by objects, where its keys are the first row', async () => {
+      const query = {
+        spreadSheetId: 'asdf',
+        sheetName: 'Hoja 1',
+        range: 'A:D',
+      };
+      const rowsArr = [['name', 'age'], ['stiven', '30']];
+      const objRowsArr = [{name: 'stiven', age: '30'}]
+
       jest
         .spyOn(service, 'findAll')
-        .mockImplementation(() => Promise.resolve(result));
-  
-      expect(await controller.getAll('Asdf123asdf', 'Hoja 1', 'A:Z')).toEqual([
-        {},
-      ]);
+        // .mockImplementation(() => Promise.resolve(rowsArr));
+        .mockResolvedValue(rowsArr);
+
+      const response = await controller.getAll(query);
+
+      expect(response).toEqual(objRowsArr);
     });
-  
-    it('An array of three empty arrays, should return an array with two objects', async () => {
-      const result = [[], [], []];
+
+    it('if it only finds one row it should return an empty array.', async () => {
+      const query = {
+        spreadSheetId: 'asdf',
+        sheetName: 'Hoja 1',
+        range: 'A1:D1',
+      };
+      const rowsArr = [['name', 'age']];
+      const objRowsArr = []
+
       jest
         .spyOn(service, 'findAll')
-        .mockImplementation(() => Promise.resolve(result));
-  
-      expect(await controller.getAll('Asdf123asdf', 'Hoja 1', 'A:Z')).toEqual([
-        {},
-        {},
-      ]);
+        .mockResolvedValue(rowsArr);
+
+      const response = await controller.getAll(query);
+      console.log({response})
+
+      expect(response).toEqual(objRowsArr);
     });
 
-  })
+    // it('An array of three empty arrays, should return an array with two objects', async () => {
+    //   const result = [[], [], []];
+    //   jest
+    //     .spyOn(service, 'findAll')
+    //     .mockImplementation(() => Promise.resolve(result));
 
-
+    //   expect(
+    //     await controller.getAll({
+    //       spreadSheetId: 'asdf',
+    //       sheetName: 'asdf',
+    //       range: 'asdf',
+    //     }),
+    //   ).toEqual([{}, {}]);
+    // });
+  });
 });
