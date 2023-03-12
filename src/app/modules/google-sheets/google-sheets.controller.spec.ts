@@ -1,3 +1,4 @@
+import { HttpException } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import googleConfig from '../../../config/google.config';
@@ -42,8 +43,11 @@ describe('GoogleSheetsController', () => {
         sheetName: 'Hoja 1',
         range: 'A:D',
       };
-      const rowsArr = [['name', 'age'], ['stiven', '30']];
-      const objRowsArr = [{name: 'stiven', age: '30'}]
+      const rowsArr = [
+        ['name', 'age'],
+        ['stiven', '30'],
+      ];
+      const objRowsArr = [{ name: 'stiven', age: '30' }];
 
       jest
         .spyOn(service, 'findAll')
@@ -53,6 +57,11 @@ describe('GoogleSheetsController', () => {
       const response = await controller.getAll(query);
 
       expect(response).toEqual(objRowsArr);
+      expect(service.findAll).toHaveBeenCalledWith(
+        query.spreadSheetId,
+        query.sheetName,
+        query.range,
+      );
     });
 
     it('if it only finds one row it should return an empty array.', async () => {
@@ -62,31 +71,46 @@ describe('GoogleSheetsController', () => {
         range: 'A1:D1',
       };
       const rowsArr = [['name', 'age']];
-      const objRowsArr = []
+      const objRowsArr = [];
 
-      jest
-        .spyOn(service, 'findAll')
-        .mockResolvedValue(rowsArr);
+      jest.spyOn(service, 'findAll').mockResolvedValue(rowsArr);
 
       const response = await controller.getAll(query);
-      console.log({response})
+      console.log({ response });
 
       expect(response).toEqual(objRowsArr);
     });
 
-    // it('An array of three empty arrays, should return an array with two objects', async () => {
-    //   const result = [[], [], []];
-    //   jest
-    //     .spyOn(service, 'findAll')
-    //     .mockImplementation(() => Promise.resolve(result));
+    it('if spreadSheetId is incorrect or empty should throw an error with status 400', async () => {
+      const query = {
+        spreadSheetId: 'incorrectId',
+        sheetName: 'Hoja 1',
+        range: 'A:D',
+      };
+      const error = new HttpException('Requested entity was not found.', 400);
+      jest.spyOn(service, 'findAll').mockRejectedValue(error);
 
-    //   expect(
-    //     await controller.getAll({
-    //       spreadSheetId: 'asdf',
-    //       sheetName: 'asdf',
-    //       range: 'asdf',
-    //     }),
-    //   ).toEqual([{}, {}]);
-    // });
+      try {
+        await controller.getAll(query);
+      } catch (e) {
+        expect(e).toEqual(error);
+      }
+    });
+
+    it('if range do not have data should throw an error with status 404', async () => {
+      const query = {
+        spreadSheetId: 'asfd',
+        sheetName: 'Hoja 1',
+        range: 'G:J',
+      };
+      const error = new HttpException('NOT FOUND DATA IN THAT RANGE', 404);
+      jest.spyOn(service, 'findAll').mockRejectedValue(error);
+
+      try {
+        await controller.getAll(query);
+      } catch (e) {
+        expect(e).toEqual(error);
+      }
+    });
   });
 });
