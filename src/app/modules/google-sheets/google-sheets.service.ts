@@ -39,6 +39,19 @@ export class GoogleSheetsService {
     range: string,
   ): Promise<string[][]> {
     try {
+      if (!spreadSheetId)
+        throw new HttpException(
+          'spreadSheetId is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      if (!sheetName)
+        throw new HttpException(
+          'sheetName is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      if (!range)
+        throw new HttpException('range is required', HttpStatus.BAD_REQUEST);
+
       const result = await this.sheets.spreadsheets.values.get({
         spreadsheetId: spreadSheetId,
         range: `${sheetName}!${range}`,

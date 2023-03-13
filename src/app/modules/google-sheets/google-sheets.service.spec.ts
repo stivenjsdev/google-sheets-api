@@ -41,64 +41,104 @@ describe('GoogleSheetsService', () => {
     expect(service).toBeDefined();
   });
 
-  it('findAll method should return an array of arrays of strings', async () => {
-    const spreadSheetId = 'asfd';
-    const sheetName = 'Hoja 1';
-    const range = 'A:D';
+  describe('findAll', () => {
+    it('should be defined', () => {
+      expect(service.findAll).toBeDefined();
+    });
 
-    const result = {
-      data: {
-        values: [
-          ['name', 'age'],
-          ['stiven', '30'],
-        ],
-      },
-    };
+    describe('given a spreadSheetId, sheetName and range', () => {
+      it('should return an array of arrays of strings', async () => {
+        const spreadSheetId = 'asfd';
+        const sheetName = 'Hoja 1';
+        const range = 'A:D';
 
-    jest.spyOn(sheets.spreadsheets.values, 'get').mockResolvedValue(result);
+        const result = {
+          data: {
+            values: [
+              ['name', 'age'],
+              ['stiven', '30'],
+            ],
+          },
+        };
 
-    const response = await service.findAll(spreadSheetId, sheetName, range);
+        jest.spyOn(sheets.spreadsheets.values, 'get').mockResolvedValue(result);
 
-    expect(response).toEqual(result.data.values);
-  });
+        const response = await service.findAll(spreadSheetId, sheetName, range);
 
-  it('if range do not have data should throw an error with status 404', async () => {
-    const spreadSheetId = 'asfd';
-    const sheetName = 'Hoja 1';
-    const range = 'K:Z';
+        expect(response).toEqual(result.data.values);
+      });
 
-    const result = {
-      data: {
-        values: [],
-      },
-    };
+      it('should throw an error with status 404 when range do not have data', async () => {
+        const spreadSheetId = 'asfd';
+        const sheetName = 'Hoja 1';
+        const range = 'K:Z';
 
-    jest.spyOn(sheets.spreadsheets.values, 'get').mockResolvedValue(result);
+        const result = {
+          data: {
+            values: [],
+          },
+        };
 
-    try {
-      await service.findAll(spreadSheetId, sheetName, range);
-    } catch (error) {
-      expect(error.status).toBe(404);
-      expect(error.message).toBe('NOT FOUND DATA IN THAT RANGE');
-    }
-  });
+        jest.spyOn(sheets.spreadsheets.values, 'get').mockResolvedValue(result);
 
-  it('if spreadSheetId, sheetName or range are wrong should throw an error with status 400', async () => {
-    const spreadSheetId = 'error';
-    const sheetName = 'error';
-    const range = 'error';
+        try {
+          await service.findAll(spreadSheetId, sheetName, range);
+        } catch (error) {
+          expect(error.status).toBe(404);
+          expect(error.message).toBe('NOT FOUND DATA IN THAT RANGE');
+        }
+      });
 
-    const findAllError = new HttpException('any message', 400);
-    const sheetsError = new Error('any message');
+      it('should throw an error with status 400, when spreadSheetId, sheetName or range are wrong', async () => {
+        const spreadSheetId = 'error';
+        const sheetName = 'error';
+        const range = 'error';
 
-    jest
-      .spyOn(sheets.spreadsheets.values, 'get')
-      .mockRejectedValue(sheetsError);
+        const findAllError = new HttpException('any message', 400);
+        const sheetsError = new Error('any message');
 
-    try {
-      await service.findAll(spreadSheetId, sheetName, range);
-    } catch (error) {
-      expect(error).toEqual(findAllError);
-    }
+        jest
+          .spyOn(sheets.spreadsheets.values, 'get')
+          .mockRejectedValue(sheetsError);
+
+        try {
+          await service.findAll(spreadSheetId, sheetName, range);
+        } catch (error) {
+          expect(error).toEqual(findAllError);
+        }
+      });
+    });
+
+    describe('when spreadSheetId, sheetName and range are missing', () => {
+      it('should throw an httpException error with status: 400 and message: ... is required', async () => {
+        const fields = [
+          { spreadSheetId: undefined, sheetName: undefined, range: undefined },
+          { spreadSheetId: undefined, sheetName: 'Hoja 1', range: 'A:D' },
+          { spreadSheetId: 'asfd', sheetName: undefined, range: 'A:D' },
+          { spreadSheetId: 'asfd', sheetName: 'Hoja 1', range: undefined },
+        ];
+        const sheetsError = new Error('any message');
+
+        jest
+          .spyOn(sheets.spreadsheets.values, 'get')
+          .mockRejectedValue(sheetsError);
+
+        for (const params of fields) {
+          try {
+            await service.findAll(
+              params.spreadSheetId,
+              params.sheetName,
+              params.range,
+            );
+          } catch (error) {
+            expect(error).toBeInstanceOf(HttpException);
+            expect(error.status).toBe(400);
+            expect(error.message).toEqual(
+              expect.stringContaining('is required'),
+            );
+          }
+        }
+      });
+    });
   });
 });
